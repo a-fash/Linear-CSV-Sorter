@@ -173,44 +173,30 @@ void * getData(char *line, int columnNumber)
 	data = strcpy(data, line);
 
 	char *ptr = data;
-	char *doubleQuote = strchr(ptr, '"');
 
-	if(doubleQuote != NULL)
+	for(i = 0; i < columnNumber; i++)
 	{
-		for(i = 0; i < columnNumber; i++)
+		if(ptr[0] == '"')
 		{
-			if(strlen(doubleQuote) >= strlen(ptr))
-			{
-				doubleQuote = strchr(++doubleQuote, '"');
-				ptr = strchr(doubleQuote, ',');
-				doubleQuote = strchr(ptr, '"');
-				ptr++;
-			} else 
-			{
-				ptr = strchr(ptr, ',');
-				ptr++;
-			}
-		}
-	} else
-	{
-		for(i = 0; i < columnNumber; i++){
-			ptr = strchr(ptr, ',');
 			ptr++;
+			ptr = strchr(ptr, '"');
 		}
+		ptr = strchr(ptr, ',');
+		ptr++;
+
 	}
 
-	int dataLen;
+	int dataLen = 0;
 
-	if(doubleQuote != NULL)
+	if(ptr[0] == '"')
 	{
-		if(strlen(doubleQuote) == strlen(ptr))
-		{
-			doubleQuote++;
-			doubleQuote = strchr(doubleQuote, '"');
-			dataLen = strlen(ptr) - strlen(doubleQuote);
-		}
+		ptr++;
+		dataLen = strcspn(ptr, "\"");
+		dataLen++;
 	} else
+	{
 		dataLen = strcspn(ptr, ",");
+	}
 
 	char *a = (char *)malloc(sizeof(char) * (dataLen + NULLTERMINATOR) );
 	a = strncpy(a, ptr, dataLen + NULLTERMINATOR);
@@ -343,57 +329,22 @@ char *readLine(FILE *file)
 int commaCheck(char *line)
 {
 	char *ptr = line;
-	char *doubleQuote = strchr(line, '"');
+	//char *doubleQuote = strchr(line, '"');
 	int totalColumns = (int)sizeof(stringTitles)/(int)sizeof(stringTitles[0]) + (int)sizeof(numericTitles)/(int)sizeof(numericTitles[0]);
 	int lineCommas = 0;
 
-	if(strchr(ptr, '"') != NULL)
+	while(ptr != NULL)
 	{
-		do
+		if(ptr[0] == '"')
 		{
-			if( doubleQuote != NULL)
-			{
-				if(strlen(doubleQuote) >= strlen(ptr))
-				{
-					doubleQuote = strchr(++doubleQuote, '"');
-					if(doubleQuote == NULL)
-						return -2;
-
-					ptr = strchr(doubleQuote, ',');
-					if(ptr == NULL)
-					{
-						lineCommas++;
-						break;
-					}
-					doubleQuote = strchr(ptr, '"');
-					ptr++;
-					lineCommas++;
-				} else
-				{
-					ptr = strchr(ptr, ',');
-					ptr++;
-					lineCommas++;
-				}
-			} else
-			{
-				ptr = strchr(ptr, ',');
-				if(ptr == NULL)
-				{
-					lineCommas++;
-					break;
-				}
-				ptr++;
-				lineCommas++;
-			}
-		}while(ptr != NULL);
-	} else
-	{
-		while( (ptr = strchr(ptr, ',')) != NULL)
-		{
-			lineCommas++;
 			ptr++;
+			ptr = strchr(ptr, '"');
 		}
+		ptr = strchr(ptr, ',');
 		lineCommas++;
+		if(ptr == NULL)
+			break;
+		ptr++;
 	}
 
 	if(lineCommas == totalColumns)

@@ -43,7 +43,9 @@ void directoryHandler(char *directoryName, char *outputDirectory, char *columnNa
 					//fprintf(stdout, "Hit File: %s\t In Directory: %s\t PID: %d\n", dir->d_name, directoryName, getpid());
 					//printf("%d,", getpid());
 
-					fprintf(temp, "%d,", getpid());
+					/**************** PROC INFO **************/
+					//fprintf(temp, "%d,", getpid());
+
 					fileHandler(directoryName, dir->d_name, outputDirectory, columnName);
 					//exit(0);
 				//}
@@ -62,7 +64,9 @@ void directoryHandler(char *directoryName, char *outputDirectory, char *columnNa
 
 						//printf("%d,", getpid());
 
-						fprintf(temp, "%d,", getpid());
+
+						/**************** PROC INFO **************/
+						//fprintf(temp, "%d,", getpid());
 
 						char *newSortDirectory = (char *)malloc( sizeof(char) * (strlen(directoryName) + strlen("/") + strlen(dir->d_name) + NULLTERMINATOR) );
 						newSortDirectory = strcpy(newSortDirectory, directoryName);

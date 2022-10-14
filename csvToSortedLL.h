@@ -24,6 +24,8 @@ int lineBuff = sizeof(char) * 64;
 extern int NULLTERMINATOR;
 extern int LINEBUFFER;
 extern int DATABUFFER;
+extern int LINEBUFFERSIZE;
+extern int DATABUFFERSIZE;
 
 int csvToSortedLinkedList( Node **head, char *path, char *column)
 {
@@ -245,6 +247,7 @@ char *readLine(FILE *file)
         int dataPos = 0;
         int lineBufferSize = LINEBUFFER;
         int dataBufferSize = DATABUFFER;
+	int bufferSize = LINEBUFFERSIZE;
         char ch;
 
         char *line = (char *)malloc(lineBufferSize);
@@ -322,7 +325,9 @@ char *readLine(FILE *file)
 
 	} while(ch != '\n' && !feof(file));
 
-	char *final = (char *)malloc(sizeof(char) * (strlen(line) + NULLTERMINATOR) );
+	//buffersize = (sizeof(char) * (linePos + NULLTERMINATOR) );
+
+	char *final = (char *)malloc(bufferSize);
 	strcpy(final, line);
 
 	free(data);

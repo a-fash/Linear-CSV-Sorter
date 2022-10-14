@@ -18,14 +18,30 @@ int procCount(char *);
 
 int sortColumnType(char *);
 
+int scannerCSVsorter(int, char *[]);
+
 int NULLTERMINATOR = 1;
 //int LINEBUFFER = sizeof(char) * 512;
 //int DATABUFFER = sizeof(char) * 128;
 
 int LINEBUFFER;
 int DATABUFFER;
+int LINEBUFFERSIZE;
+int DATABUFFERSIZE;
+
+
 
 int main(int argc, char *argv[])
+{
+	int i;
+
+	for(i = 0; i < 100; i++)
+		scannerCSVsorter(argc, argv);
+
+	return 0;
+}
+
+int scannerCSVsorter(int argc, char *argv[])
 {
 	clock_t start;
 	start = clock();
@@ -33,8 +49,8 @@ int main(int argc, char *argv[])
 	struct timeval s;
 	gettimeofday(&s, NULL);
 
-	int maxFileAndDirectories = 255;
-	int maxPIDlength = 5;
+	//int maxFileAndDirectories = 255;
+	//int maxPIDlength = 5;
 
 	hasSortColumn = 0;
 	hasSortDirectory = 0;
@@ -43,6 +59,9 @@ int main(int argc, char *argv[])
 
 	LINEBUFFER = atoi(argv[7]);
 	DATABUFFER = atoi(argv[8]);
+	LINEBUFFERSIZE = 512;
+	DATABUFFERSIZE = 8;
+
 
 	/*
 	if(argc-1 > 6)
@@ -134,11 +153,17 @@ int main(int argc, char *argv[])
 		}
         }
 
+	FILE *temp = NULL;
+
+	/***********PROC INFO*************************/
+	/*
         fprintf(stdout, "Initial PID: %d\n", getpid());
 
 	FILE *temp = tmpfile();
-	
+
 	fprintf(temp, "PIDS of all child processes: ");
+	*/
+	/***********PROC INFO*************************/
 
 	//Use stdout as buffer for child pids
 	//fprintf(stdout, "%s", "PIDS of all child processes: ");
@@ -148,6 +173,8 @@ int main(int argc, char *argv[])
 
         directoryHandler(sortDirectory, outputDirectory, sortColumn, temp);
 
+	/***********PROC INFO*************************/
+	/*
 	rewind(temp);
 
 	char *childProcs = (char *)malloc(sizeof(char) * (maxFileAndDirectories * (maxPIDlength + 1)) );
@@ -159,6 +186,9 @@ int main(int argc, char *argv[])
         fprintf(stdout, "%s\n", childProcs);
 
         fprintf(stdout,	"Total number of processes: %d\n", procCount(childProcs));
+	*/
+	/***********PROC INFO*************************/
+
 
 	clock_t end;
 	end = clock();
@@ -184,7 +214,7 @@ int main(int argc, char *argv[])
 
 	fclose(result);
 
-	free(childProcs);
+	//free(childProcs);
 	freeData();
 
 	return 0;

@@ -19,13 +19,19 @@ int procCount(char *);
 int sortColumnType(char *);
 
 int NULLTERMINATOR = 1;
+//int LINEBUFFER = sizeof(char) * 512;
+//int DATABUFFER = sizeof(char) * 128;
+
+int LINEBUFFER;
+int DATABUFFER;
 
 int main(int argc, char *argv[])
 {
-	clock_t start, end;
-	double diff;
-
+	clock_t start;
 	start = clock();
+
+	struct timeval s;
+	gettimeofday(&s, NULL);
 
 	int maxFileAndDirectories = 255;
 	int maxPIDlength = 5;
@@ -35,12 +41,17 @@ int main(int argc, char *argv[])
 	hasOutputDirectory = 0;
 	char *flag;
 
+	LINEBUFFER = atoi(argv[7]);
+	DATABUFFER = atoi(argv[8]);
+
+	/*
 	if(argc-1 > 6)
 	{
 		fprintf(stderr, "ERROR: Input fields is greater than 6\n");
 		freeData();
 		return -1;
 	}
+	*/
 
 	if((argc-1) % 2 == 1)
 	{
@@ -50,7 +61,7 @@ int main(int argc, char *argv[])
 	}
 
 	int i;
-	for(i=1; i < argc; i+=2)
+	for(i=1; i < 6; i+=2)
 	{
 		flag = (char *)malloc(sizeof(char) * (strlen(argv[i]) + NULLTERMINATOR) );
 		strcpy(flag, argv[i]);
@@ -149,10 +160,29 @@ int main(int argc, char *argv[])
 
         fprintf(stdout,	"Total number of processes: %d\n", procCount(childProcs));
 
+	clock_t end;
 	end = clock();
+
+	struct timeval e;
+	gettimeofday(&e, NULL);
+
+	double diff;
 	diff = (double)(end - start) / CLOCKS_PER_SEC;
 
-	fprintf(stdout, "Time taken %f\n", diff);
+	double d = (double) (e.tv_usec - s.tv_usec) / 1000000 +(double) (e.tv_sec - s.tv_sec);
+
+	fprintf(stdout, "CPU Time taken %f\n", diff);
+	fprintf(stdout, "USER Time taken %f\n", d);
+
+	char resultName[50];
+
+	sprintf(resultName, "result/result-L%d-D%d.txt", LINEBUFFER, DATABUFFER); 
+
+	FILE *result = fopen(resultName, "a+");
+
+	fprintf(result, "%f\n", diff);
+
+	fclose(result);
 
 	free(childProcs);
 	freeData();
